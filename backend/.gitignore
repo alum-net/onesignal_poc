@@ -1,0 +1,63 @@
+**/credentials.properties
+# .gitignore
+
+### Maven
+# Usually, Maven creates an output directory called 'target'
+target/
+# IntelliJ IDEA
+.idea/
+# Eclipse
+.classpath
+.project
+.settings/
+# VS Code
+.vscode/
+
+# Package files
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Logs
+logs/
+*.log
+
+# Windows thumbnail cache
+Thumbs.db
+
+# macOS
+.DS_Store
+
+# A file used to store local environment variables for development
+.env
+.env.local
+
+# Local configuration files
+*.local
+*.properties.local
+*.yml.local
+
+# IDE-specific files
+# NetBeans
+nbproject/
+nb-configuration.xml
+
+# IntelliJ IDEA
+# Exclude the project's local workspace
+# (not to be confused with the .idea/ folder which is already excluded)
+*.iml
+*.iws
+*.ipr
+
+# Miscellaneous
+# The SQLite database file
+# If you are using the in-memory database, this may not be needed
+*.db
+
+# Temporary files created by editors
+*~
+# Backup files
+*.bak
