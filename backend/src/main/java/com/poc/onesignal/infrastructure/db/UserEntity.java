@@ -1,6 +1,6 @@
-package main.java.com.poc.onesignal.infrastructure.db;
+package com.poc.onesignal.infrastructure.db;
 
-import main.java.com.poc.onesignal.domain.User;
+import com.poc.onesignal.domain.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;

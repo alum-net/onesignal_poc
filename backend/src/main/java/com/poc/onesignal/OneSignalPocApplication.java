@@ -1,4 +1,4 @@
-package main.java.com.poc.onesignal;
+package com.poc.onesignal;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

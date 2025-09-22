@@ -1,8 +1,8 @@
-package main.java.com.poc.onesignal.infrastructure.rest;
+package com.poc.onesignal.infrastructure.rest;
 
-import main.java.com.poc.onesignal.application.UserPort;
-import main.java.com.poc.onesignal.domain.User;
-import main.java.com.poc.onesignal.domain.Notification;
+import com.poc.onesignal.application.UserPort;
+import com.poc.onesignal.domain.User;
+import com.poc.onesignal.domain.Notification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +11,8 @@ import jakarta.validation.Valid;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -63,5 +65,13 @@ public class UserController {
     } catch (Exception e) {
       return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
+  }
+
+  @GetMapping("/exists/{email}")
+  public ResponseEntity<Map<String, Boolean>> checkUserExists(@PathVariable String email) {
+    boolean exists = userPort.findUserByEmail(email).isPresent();
+    Map<String, Boolean> response = new HashMap<>();
+    response.put("exists", exists);
+    return new ResponseEntity<>(response, HttpStatus.OK);
   }
 }

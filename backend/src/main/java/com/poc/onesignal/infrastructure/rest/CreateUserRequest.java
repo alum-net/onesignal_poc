@@ -1,4 +1,4 @@
-package main.java.com.poc.onesignal.infrastructure.rest;
+package com.poc.onesignal.infrastructure.rest;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

@@ -1,7 +1,7 @@
-package main.java.com.poc.onesignal.application;
+package com.poc.onesignal.application;
 
-import main.java.com.poc.onesignal.domain.User;
-import main.java.com.poc.onesignal.domain.Notification;
+import com.poc.onesignal.domain.User;
+import com.poc.onesignal.domain.Notification;
 
 import java.util.Optional;
 

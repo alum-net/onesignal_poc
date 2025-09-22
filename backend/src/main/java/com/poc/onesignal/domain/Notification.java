@@ -1,4 +1,4 @@
-package main.java.com.poc.onesignal.domain;
+package com.poc.onesignal.domain;
 
 import lombok.Builder;
 import lombok.Getter;

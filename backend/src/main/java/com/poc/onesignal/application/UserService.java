@@ -1,9 +1,9 @@
-package main.java.com.poc.onesignal.application;
+package com.poc.onesignal.application;
 
-import main.java.com.poc.onesignal.domain.User;
-import main.java.com.poc.onesignal.domain.Notification;
-import main.java.com.poc.onesignal.infrastructure.db.UserRepository;
-import main.java.com.poc.onesignal.infrastructure.onesignal.OneSignalAdapter;
+import com.poc.onesignal.domain.User;
+import com.poc.onesignal.domain.Notification;
+import com.poc.onesignal.infrastructure.db.UserRepository;
+import com.poc.onesignal.infrastructure.onesignal.OneSignalAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
@@ -17,7 +17,7 @@ public class UserService implements UserPort {
 
   @Override
   public User createUser(String email, String name, String lastName) {
-    if (userRepository.findByEmail(email).isPresent()) {
+    if (userRepository.findDomainUserByEmail(email).isPresent()) {
       throw new IllegalArgumentException("User with this email already exists.");
     }
     User newUser = User.builder()
@@ -31,7 +31,7 @@ public class UserService implements UserPort {
 
   @Override
   public Optional<User> findUserByEmail(String email) {
-    return userRepository.findByEmail(email);
+    return userRepository.findDomainUserByEmail(email);
   }
 
   @Override

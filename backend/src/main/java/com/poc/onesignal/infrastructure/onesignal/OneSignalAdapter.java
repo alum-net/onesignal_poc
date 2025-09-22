@@ -1,12 +1,11 @@
-package main.java.com.poc.onesignal.infrastructure.onesignal;
+package com.poc.onesignal.infrastructure.onesignal;
 
-import main.java.com.poc.onesignal.domain.Notification;
+import com.poc.onesignal.domain.Notification;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.HashMap;
@@ -26,7 +25,7 @@ public class OneSignalAdapter {
         this.restTemplate = new RestTemplate();
     }
 
-    public void send(DomainNotification domainNotification) {
+    public void send(Notification Notification) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Basic " + oneSignalRestApiKey);
@@ -35,17 +34,17 @@ public class OneSignalAdapter {
         payload.put("app_id", oneSignalAppId);
 
         Map<String, String> contents = new HashMap<>();
-        contents.put("en", domainNotification.getContent());
+        contents.put("en", Notification.getContent());
         payload.put("contents", contents);
 
         Map<String, String> headings = new HashMap<>();
-        headings.put("en", domainNotification.getHeading());
+        headings.put("en", Notification.getHeading());
         payload.put("headings", headings);
 
         // Target the user by their external_id (the user's UUID)
-        payload.put("include_external_user_ids", Collections.singletonList(domainNotification.getRecipientId()));
+        payload.put("include_external_user_ids", Collections.singletonList(Notification.getRecipientId()));
 
-        domainNotification.getSchedule().ifPresent(schedule -> {
+        Notification.getSchedule().ifPresent(schedule -> {
             // OneSignal API expects a timestamp string
             payload.put("send_after", schedule.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss 'GMT'")));
         });
