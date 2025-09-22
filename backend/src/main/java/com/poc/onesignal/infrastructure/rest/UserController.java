@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +19,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:8081")
 public class UserController {
   private final UserPort userPort;
 
@@ -51,8 +53,9 @@ public class UserController {
   public ResponseEntity<Void> scheduleNotification(@PathVariable String email,
       @Valid @RequestBody SendNotificationRequest request) {
     try {
-      LocalDateTime scheduledTime = LocalDateTime.parse(request.getScheduledAt(),
-          DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+      OffsetDateTime scheduledTime = OffsetDateTime.parse(
+          request.getScheduledAt(),
+          DateTimeFormatter.ISO_OFFSET_DATE_TIME);
       Notification notification = Notification.builder()
           .heading(request.getHeading())
           .content(request.getContent())

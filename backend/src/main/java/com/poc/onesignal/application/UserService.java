@@ -42,7 +42,7 @@ public class UserService implements UserPort {
       Notification instantNotification = Notification.builder()
           .heading(notification.getHeading())
           .content(notification.getContent())
-          .recipientId(user.getId().toString())
+          .recipientId(user.getEmail().toString())
           .schedule(Optional.empty())
           .build();
       oneSignalAdapter.send(instantNotification);
@@ -59,7 +59,7 @@ public class UserService implements UserPort {
       Notification scheduledNotification = Notification.builder()
           .heading(notification.getHeading())
           .content(notification.getContent())
-          .recipientId(user.getId().toString())
+          .recipientId(user.getEmail().toString())
           .schedule(notification.getSchedule())
           .build();
       oneSignalAdapter.send(scheduledNotification);

@@ -1,18 +1,19 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, View, TextInput, Button, Alert } from "react-native";
-import { OneSignal } from "react-native-onesignal";
+import { StyleSheet, Text, View, TextInput, Button } from "react-native"; // works for web too
+import OneSignal from "react-onesignal";
 
 export default function Index() {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [selectedDate] = useState(new Date());
+  const [selectedDate] = useState(new Date(Date.now() + 5 * 60 * 1000));
 
   const loginUser = async (userEmail: string) => {
     try {
-      OneSignal.login(userEmail);
+      await OneSignal.login(userEmail);
+      await OneSignal.User.PushSubscription.optIn();
     } catch (error) {
-      console.error("OneSignal login error (native):", error);
+      console.error("OneSignal login error (web):", error);
     }
   };
 
@@ -25,7 +26,7 @@ export default function Index() {
       return data.exists;
     } catch (error) {
       console.error("Error checking user existence:", error);
-      Alert.alert("Error", "Could not check user existence.");
+      alert("Error: Could not check user existence.");
       return false;
     }
   };
@@ -39,21 +40,21 @@ export default function Index() {
       });
 
       if (response.status === 201) {
-        Alert.alert("Success", "User created successfully!");
+        alert("User created successfully!");
       } else if (response.status === 409) {
-        Alert.alert("Info", "User already exists.");
+        alert("User already exists.");
       } else {
-        Alert.alert("Error", "Failed to create user.");
+        alert("Failed to create user.");
       }
     } catch (error) {
       console.error(error);
-      Alert.alert("Error", "Backend server error.");
+      alert("Backend server error.");
     }
   };
 
   const handleSendInstantNotification = async () => {
     if (!(await checkUserExists(email))) {
-      Alert.alert("Error", "User not found.");
+      alert("User not found.");
       return;
     }
     await loginUser(email);
@@ -66,23 +67,22 @@ export default function Index() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             heading: "Instant Notification",
-            content: "Hello from Native!",
+            content: "Hello from Web!",
           }),
         }
       );
 
       response.ok
-        ? Alert.alert("Success", "Notification sent!")
-        : Alert.alert("Error", "Failed to send notification.");
+        ? console.log("Notification sent!")
+        : console.log("Failed to send notification.");
     } catch (error) {
       console.error(error);
-      Alert.alert("Error", "An error occurred.");
     }
   };
 
   const handleScheduledNotification = async () => {
     if (!(await checkUserExists(email))) {
-      Alert.alert("Error", "User not found.");
+      alert("User not found.");
       return;
     }
     await loginUser(email);
@@ -104,17 +104,16 @@ export default function Index() {
       );
 
       response.ok
-        ? Alert.alert("Success", "Scheduled notification sent!")
-        : Alert.alert("Error", "Failed to schedule notification.");
+        ? console.log("Scheduled notification sent!")
+        : console.log("Failed to schedule notification.");
     } catch (error) {
       console.error(error);
-      Alert.alert("Error", "An error occurred.");
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>OneSignal PoC (Native)</Text>
+      <Text style={styles.title}>OneSignal PoC (Web)</Text>
 
       <View style={styles.formSection}>
         <Text style={styles.sectionTitle}>Create/Update User</Text>
