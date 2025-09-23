@@ -1,114 +1,30 @@
-import React, { useState } from "react";
-import { StyleSheet, Text, View, TextInput, Button, Alert } from "react-native";
+import React from "react";
+import { Text, View, TextInput, Button } from "react-native";
+import {
+  useUserState,
+  createOrUpdateUser,
+  handleScheduledNotification,
+  handleSendInstantNotification,
+} from "../shared/hooks";
+import { styles as sharedStyles } from "../shared/styles";
 import { OneSignal } from "react-native-onesignal";
 
 export default function Index() {
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [selectedDate] = useState(new Date());
+  const {
+    email,
+    setEmail,
+    name,
+    setName,
+    lastName,
+    setLastName,
+    selectedDate,
+  } = useUserState();
 
   const loginUser = async (userEmail: string) => {
     try {
       OneSignal.login(userEmail);
     } catch (error) {
       console.error("OneSignal login error (native):", error);
-    }
-  };
-
-  const checkUserExists = async (userEmail: string) => {
-    try {
-      const response = await fetch(
-        `${process.env.EXPO_PUBLIC_API_URL}/users/exists/${userEmail}`
-      );
-      const data = await response.json();
-      return data.exists;
-    } catch (error) {
-      console.error("Error checking user existence:", error);
-      Alert.alert("Error", "Could not check user existence.");
-      return false;
-    }
-  };
-
-  const handleCreateOrUpdateUser = async () => {
-    try {
-      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/users`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, name, lastName }),
-      });
-
-      if (response.status === 201) {
-        Alert.alert("Success", "User created successfully!");
-      } else if (response.status === 409) {
-        Alert.alert("Info", "User already exists.");
-      } else {
-        Alert.alert("Error", "Failed to create user.");
-      }
-    } catch (error) {
-      console.error(error);
-      Alert.alert("Error", "Backend server error.");
-    }
-  };
-
-  const handleSendInstantNotification = async () => {
-    if (!(await checkUserExists(email))) {
-      Alert.alert("Error", "User not found.");
-      return;
-    }
-    await loginUser(email);
-
-    try {
-      const response = await fetch(
-        `${process.env.EXPO_PUBLIC_API_URL}/users/${email}/send-notification`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            heading: "Instant Notification",
-            content: "Hello from Native!",
-          }),
-        }
-      );
-
-      response.ok
-        ? Alert.alert("Success", "Notification sent!")
-        : Alert.alert("Error", "Failed to send notification.");
-    } catch (error) {
-      console.error(error);
-      Alert.alert("Error", "An error occurred.");
-    }
-  };
-
-  const handleScheduledNotification = async () => {
-    if (!(await checkUserExists(email))) {
-      Alert.alert("Error", "User not found.");
-      return;
-    }
-    await loginUser(email);
-
-    const formattedDate = selectedDate.toISOString();
-
-    try {
-      const response = await fetch(
-        `${process.env.EXPO_PUBLIC_API_URL}/users/${email}/schedule-notification`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            heading: "Scheduled Notification",
-            content: "This is a scheduled push notification!",
-            scheduledAt: formattedDate,
-          }),
-        }
-      );
-
-      response.ok
-        ? Alert.alert("Success", "Scheduled notification sent!")
-        : Alert.alert("Error", "Failed to schedule notification.");
-    } catch (error) {
-      console.error(error);
-      Alert.alert("Error", "An error occurred.");
     }
   };
 
@@ -136,20 +52,25 @@ export default function Index() {
           value={lastName}
           onChangeText={setLastName}
         />
-        <Button title="Create/Update User" onPress={handleCreateOrUpdateUser} />
+        <Button
+          title="Create/Update User"
+          onPress={() => createOrUpdateUser(email, name, lastName)}
+        />
       </View>
 
       <View style={styles.formSection}>
         <Text style={styles.sectionTitle}>Send Notifications</Text>
         <Button
           title="Send Instant Notification"
-          onPress={handleSendInstantNotification}
+          onPress={() => handleSendInstantNotification(loginUser, email)}
         />
         <View style={styles.scheduleSection}>
           <Text>{selectedDate.toLocaleString()}</Text>
           <Button
             title="Send Scheduled Notification"
-            onPress={handleScheduledNotification}
+            onPress={() =>
+              handleScheduledNotification(loginUser, email, selectedDate)
+            }
           />
         </View>
       </View>
@@ -157,17 +78,4 @@ export default function Index() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: "center", padding: 20 },
-  title: { fontSize: 22, fontWeight: "bold", marginBottom: 20 },
-  formSection: { marginBottom: 30 },
-  sectionTitle: { fontSize: 18, fontWeight: "bold", marginBottom: 10 },
-  input: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    marginBottom: 10,
-    padding: 8,
-    borderRadius: 5,
-  },
-  scheduleSection: { marginTop: 20, alignItems: "center" },
-});
+const styles = sharedStyles; // Ensure no conflicts with local styles
